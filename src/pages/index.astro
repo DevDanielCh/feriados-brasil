@@ -1,0 +1,108 @@
+---
+import * as cheerio from "cheerio";
+import { parse, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+function formatDate(dateStr: string) {
+	console.log(JSON.stringify(dateStr));
+	const parsedDate = parse(dateStr, "d/M/yy", new Date(), {
+		locale: ptBR,
+	});
+	return format(parsedDate, "dd/MM/yyyy");
+}
+
+const thisYear = new Date().getFullYear();
+const response = await fetch(
+	`https://www.anbima.com.br/feriados/fer_nacionais/${thisYear}.asp`,
+);
+const anbimaHtml = await response.text();
+const $ = cheerio.load(anbimaHtml);
+
+const valuesToRender: {
+	data: string;
+	diaSemana: string;
+	feriado: string;
+}[] = [];
+
+$(`table.interna tr:not(:first-child)`).each((_, tr) => {
+	let splitedValues = $(tr).text().replaceAll("\t", "").split("\n");
+	let data = formatDate(splitedValues[1].replace(/[\t\n ]+/g, ""));
+	let diaSemana = splitedValues[2];
+	let feriado = splitedValues[3];
+	valuesToRender.push({
+		data: data,
+		diaSemana: diaSemana,
+		feriado: feriado,
+	});
+});
+---
+
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Feriados Brasil - {thisYear}</h1>
+		<div class="feriados-list">
+			{
+				valuesToRender.map((item) => {
+					return (
+						<div class="item">
+							<span class="date">
+								{item.data} - {item.diaSemana}
+							</span>
+							<span class="name">{item.feriado}</span>
+						</div>
+					);
+				})
+			}
+		</div>
+	</body>
+</html>
+
+<style lang="scss">
+	* {
+		margin: 0;
+		padding: 0;
+		font-family: "Roboto", sans-serif;
+	}
+	body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100vw;
+		height: 100vh;
+		gap: 2rem;
+		.feriados-list {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-rows: auto;
+			gap: 8px;
+			.item {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				gap: 2px;
+				border: 1px solid;
+				border-radius: 4px;
+				padding: 1rem 2rem;
+				.date {
+					font-size: 1.1rem;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+</style>
