@@ -22,36 +22,26 @@ const valuesToRender = await getHolidays(year.toString());
     />
     <title>Feriados Brasil</title>
   </head>
-  <body
-    class="flex items-center justify-center w-screen h-screen px-5 lg:px-40"
-  >
-    <div class="flex flex-col items-center justify-center gap-4 w-full">
-      <div
-        class="flex items-center justify-around w-full top-0 left-0 fixed bg-white lg:relative"
-      >
+  <body class="flex justify-center w-screen h-screen px-5 lg:px-40 overflow-x-hidden overflow-y-auto">
+    <div class="flex flex-col justify-center gap-4 w-full">
+      <div class="flex items-center justify-around w-full bottom-0 left-0 fixed z-50 bg-zinc-300 border-t border-zinc-400 lg:bg-white lg:relative lg:border-t-0">
         <div class="flex items-center justify-start text-5xl w-20">
-			{(year != new Date().getFullYear()) ? <Icon id="prev-page-btn" title="Ano Anterior" name="mdi:chevron-left" class="cursor-pointer"/> : <></>} 
+          {(year != new Date().getFullYear()) ? <Icon id="prev-page-btn" title="Ano Anterior" name="mdi:chevron-left" class="cursor-pointer"/> : <></>}
         </div>
-        <h1 class="text-2xl font-bold lg:text-4xl">Feriados Brasil - {year}</h1>
+        <h1 class="font-bold sm:text-xl md:text-2xl lg:text-4xl">Feriados Brasil - {year}</h1>
         <div class="flex items-center justify-end text-5xl w-20">
           <Icon id="next-page-btn" title="Próximo Ano" name="mdi:chevron-right" class="cursor-pointer" />
         </div>
       </div>
-      <div
-        class="grid gap-2 grid-cols-1 lg:grid-cols-3 w-full mt-40 mb-2 lg:mt-0 lg:mb-0"
-      >
-        {
-          valuesToRender.map((item) => {
-            return (
-              <div class="flex flex-col justify-center items-center px-4 py-2 border border-black rounded-md">
-                <span class="font-bold">
-                  {item.data} - {item.diaSemana}
-                </span>
-                <span class="name">{item.feriado}</span>
-              </div>
-            );
-          })
-        }
+      <div class="grid gap-2 grid-cols-1 lg:grid-cols-3 w-full mt-9 pb-20 lg:mt-0 lg:pb-20 px-4 overflow-y-auto">
+        {valuesToRender.map((item) => (
+          <div class="flex flex-col justify-center items-center px-4 py-2 border border-zinc-500 rounded-md">
+            <span class="font-bold">
+              {item.data} - {item.diaSemana}
+            </span>
+            <span class="name">{item.feriado}</span>
+          </div>
+        ))}
       </div>
     </div>
   </body>
