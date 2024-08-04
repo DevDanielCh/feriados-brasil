@@ -6,8 +6,6 @@ import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://devdanielch.github.io',
-  base: '/feriados-brasil',
   output: "hybrid",
   integrations: [tailwind(), icon()],
   adapter: netlify()
